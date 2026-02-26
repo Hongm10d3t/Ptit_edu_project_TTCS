@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>User Management</title>
+    <style>
+        body {
+            font-family: Arial;
+            padding: 30px;
+        }
+
+        input,
+        select {
+            margin: 5px;
+            padding: 5px;
+        }
+
+        button {
+            padding: 6px 10px;
+            cursor: pointer;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background: #f2f2f2;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>User Management</h2>
+
+    <h3>Create / Update User</h3>
+
+    <input type="hidden" id="userId">
+
+    <input id="code" placeholder="Code">
+    <input id="fullName" placeholder="Full Name">
+    <input id="email" placeholder="Email">
+    <input id="passwordHash" placeholder="Password Hash">
+    <input id="department" placeholder="Department">
+
+    <select id="role">
+        <option value="ADMIN">ADMIN</option>
+        <option value="TEACHER">TEACHER</option>
+        <option value="STUDENT">STUDENT</option>
+    </select>
+
+    <select id="status">
+        <option value="ACTIVE">ACTIVE</option>
+        <option value="INACTIVE">INACTIVE</option>
+    </select>
+
+    <button onclick="saveUser()">Save</button>
+    <button onclick="resetForm()">Reset</button>
+
+    <h3>User List</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Department</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="userTable"></tbody>
+    </table>
+
+    <script>
+
+        const BASE_URL = "http://localhost:8888/v1/api/users";
+        let users = [];
+        async function loadUsers() {
+            const res = await fetch(BASE_URL);
+            users = await res.json();
+
+            const table = document.getElementById("userTable");
+            table.innerHTML = "";
+
+            users.forEach(user => {
+                table.innerHTML += `
+            <tr>
+                <td>${user.code}</td>
+                <td>${user.fullName}</td>
+                <td>${user.email}</td>
+                <td>${user.role}</td>
+                <td>${user.status}</td>
+                 <td>${user.department || ""}</td>
+                <td>
+                    <button onclick="editUser('${user._id}')">Sửa</button>
+                    <button onclick="deleteUser('${user._id}')">Xóa</button>
+                </td>
+            </tr>
+        `;
+            });
+        }
+
+        async function saveUser() {
+            const id = document.getElementById("userId").value;
+
+            const userData = {
+                code: document.getElementById("code").value,
+                fullName: document.getElementById("fullName").value,
+                email: document.getElementById("email").value,
+                passwordHash: document.getElementById("passwordHash").value,
+                role: document.getElementById("role").value,
+                status: document.getElementById("status").value,
+                department: document.getElementById("department").value
+            };
+
+            if (id) {
+                console.log(">>>> check loi o day", id);
+                await fetch(`${BASE_URL}/${id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(userData)
+                });
+            } else {
+                await fetch(BASE_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(userData)
+                });
+            }
+
+            resetForm();
+            loadUsers();
+        }
+
+        function editUser(id) {
+            console.log('nhay xuong day');
+            const user = users.find(u => u._id == id);
+            document.getElementById("userId").value = user._id;
+            document.getElementById("code").value = user.code;
+            document.getElementById("fullName").value = user.fullName;
+            document.getElementById("email").value = user.email;
+            document.getElementById("role").value = user.role;
+            document.getElementById("status").value = user.status;
+            document.getElementById("department").value = user.department;
+        }
+
+        async function deleteUser(id) {
+            if (confirm("Delete this user?")) {
+                await fetch(`${BASE_URL}/${id}`, { method: "DELETE" });
+                loadUsers();
+            }
+        }
+
+        function resetForm() {
+            document.getElementById("userId").value = "";
+            document.querySelectorAll("input").forEach(i => i.value = "");
+        }
+
+        loadUsers();
+
+    </script>
+
+</body>
+
+</html>
