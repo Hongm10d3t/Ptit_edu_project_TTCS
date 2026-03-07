@@ -4,10 +4,10 @@ const USER_ROLES = ["ADMIN", "TEACHER", "STUDENT"];
 
 const userSchema = new mongoose.Schema(
     {
-        code: { type: String, required: true, unique: true, trim: true }, // mã SV/GV hoặc username
+        code: { type: String, required: true, unique: true, trim: true },
         fullName: { type: String, required: true, trim: true },
         email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-        passwordHash: { type: String, required: true }, // bcrypt hash
+        passwordHash: { type: String, required: true },
 
         role: { type: String, enum: USER_ROLES, required: true },
         status: { type: String, enum: ["ACTIVE", "INACTIVE"], default: "ACTIVE" },
