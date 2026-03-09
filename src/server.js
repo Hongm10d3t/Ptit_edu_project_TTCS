@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const fileUpload = require("express-fileupload");
-const User = require('./models/user');
+const session = require('express-session');
 const configViewEngine = require("./config/viewEngine");
 const connectDB = require("./config/database");
 const webRoutes = require("./routes/web");
@@ -21,8 +21,28 @@ app.use(fileUpload());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
 // view engine + static
 configViewEngine(app);
+
+// config session
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET || "my_secret_key",
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            httpOnly: true,
+            maxAge: 1000 * 60 * 60 * 2 // 2 tiếng
+        }
+    })
+);
+
+// Truyền user từ session sang view
+app.use((req, res, next) => {
+    res.locals.currentUser = req.session.user || null;
+    next();
+});
 
 // routes
 app.use("/", webRoutes);
