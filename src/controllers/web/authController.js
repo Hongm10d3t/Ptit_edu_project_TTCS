@@ -33,6 +33,7 @@ const handleLogin = async (req, res) => {
             name: user.data.name
         };
 
+
         if (user.data.role === "ADMIN") {
             return res.redirect('/admin');
         } else if (user.data.role === "STUDENT") {

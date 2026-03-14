@@ -7,6 +7,7 @@ const configViewEngine = require("./config/viewEngine");
 const connectDB = require("./config/database");
 const webRoutes = require("./routes/web");
 const apiRoutes = require("./routes/api");
+const cors = require("cors");
 
 const app = express();
 
@@ -44,9 +45,16 @@ app.use((req, res, next) => {
     next();
 });
 
+// liên kết FE
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}));
+
 // routes
-app.use("/", webRoutes);
 app.use("/v1/api", apiRoutes);
+// app.use("/", webRoutes);
+
 
 // connect database
 (async () => {

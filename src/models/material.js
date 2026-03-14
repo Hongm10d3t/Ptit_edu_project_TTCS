@@ -2,26 +2,57 @@ const mongoose = require("mongoose");
 
 const materialSchema = new mongoose.Schema(
     {
-        sectionId: { type: mongoose.Schema.Types.ObjectId, ref: "Section", required: true },
-        title: { type: String, required: true, trim: true },
-        type: { type: String, enum: ["PDF", "SLIDE", "VIDEO", "LINK", "TEXT"], required: true },
+        courseId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Course",
+            required: true,
+        },
+        createdBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
 
-        // nếu file upload:
-        fileUrl: { type: String, default: null },
-        storageKey: { type: String, default: null }, // dùng cho S3/MinIO sau này
+        type: {
+            type: String,
+            enum: ["video", "document"],
+            required: true,
+        },
+        title: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        description: {
+            type: String,
+            default: "",
+            trim: true,
+        },
 
-        // nếu link:
-        linkUrl: { type: String, default: null },
+        url: {
+            type: String,
+            default: "",
+            trim: true,
+        },
+        fileName: {
+            type: String,
+            default: "",
+            trim: true,
+        },
 
-        uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-        visibility: { type: String, enum: ["PUBLIC", "PRIVATE"], default: "PUBLIC" },
-
-        order: { type: Number, default: 0 },
-        description: { type: String, default: "" },
+        isPublished: {
+            type: Boolean,
+            default: true,
+        },
     },
-    { timestamps: true }
+    {
+        timestamps: true,
+    }
 );
 
-materialSchema.index({ sectionId: 1, createdAt: -1 });
+materialSchema.index({ courseId: 1, createdAt: -1 });
+materialSchema.index({ createdBy: 1 });
+materialSchema.index({ type: 1 });
 
-module.exports = mongoose.model("Material", materialSchema);
+module.exports =
+    mongoose.models.Material || mongoose.model("Material", materialSchema);

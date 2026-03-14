@@ -2,12 +2,19 @@
 const authService = require('../../services/authService');
 
 const loginApi = async (req, res) => {
-    const { code, password } = req.body;
+    const code = req.body.username;
+    const password = req.body.password;;
     let user = await authService.loginService(code, password);
-    return res.status(200).json({
-        EC: 0,
-        data: user
-    })
+    // session
+    req.session.user = {
+        id: user.data._id,
+        code: user.data.code,
+        role: user.data.role,
+        name: user.data.name
+    };
+    // console.log(">>>>>", req.session.user);
+
+    return res.status(200).json(user.data);
 };
 
 const logoutApi = (req, res) => {
@@ -27,8 +34,21 @@ const logoutApi = (req, res) => {
         });
     });
 };
+const getMe = (req, res) => {
+    if (req.session && req.session.user) {
+        return res.status(200).json({
+            EC: 0,
+            user: req.session.user
+        });
+    }
+    return res.status(401).json({
+        EC: 1,
+        user: null
+    });
+};
 
 module.exports = {
     loginApi,
-    logoutApi
+    logoutApi,
+    getMe
 };

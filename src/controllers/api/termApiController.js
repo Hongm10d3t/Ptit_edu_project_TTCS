@@ -18,6 +18,7 @@ module.exports = {
         const id = req.params.id;
         let data = req.body;
         let term = await updateTermService(id, data);
+
         return res.status(200).json({
             data: term
         })

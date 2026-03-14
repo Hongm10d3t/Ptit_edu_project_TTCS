@@ -5,7 +5,7 @@ const {
     requireLogin,
     requireGuest,
     requireRole
-} = require('../../middleware/authMiddleware');
+} = require('../../middleware/authMiddlewareWeb');
 
 // admin
 router.use(requireRole("ADMIN"));
