@@ -24,6 +24,19 @@ routerAPI.delete('/term/:id', termController.deleteTerm);
 
 // Manager course
 routerAPI.post('/term/:termId/course', courseController.postCreateCourse);
+routerAPI.get('/term/:termId/courses', courseController.getAllCourses);
+routerAPI.put('/term/:termId/:courseId', courseController.putUpdateCourse);
+routerAPI.delete('/term/:termId/:courseId', courseController.deleteCourse);
+
+// Add Teacher, Student in course
+routerAPI.get('/course/:courseId/members', courseController.getAllMembers);
+routerAPI.post('/course/:courseId/teacher', courseController.postAddTeacher);
+routerAPI.post('/course/:courseId/student', courseController.postAddStudent);
+
+
+
+
+
 
 
 

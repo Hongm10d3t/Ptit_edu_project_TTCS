@@ -1,8 +1,75 @@
 
+const { createCourseService, getAllCoursesService, UpdateCourseService, deleteCourseService, addTeacherService, addStudentService, getAllMembersService } = require('../../services/courseService');
 const postCreateCourse = async (req, res) => {
-    return res.send("goi api thanh cong");
+    let termId = req.params.termId;
+    const payload = { ...req.body, createdBy: req.session.user.id };
+    console.log(">>>>>>> Đây là session", req.session.user.id);
+    console.log(">>>>>>payload", payload);
+    let data = await createCourseService(termId, payload);
+    return res.status(200).json({
+        EC: 0,
+        data: data
+    })
+}
+
+const getAllCourses = async (req, res) => {
+    let termId = req.params.termId;
+    let data = await getAllCoursesService(termId);
+    return res.status(200).json({
+        EC: 0,
+        data: data
+    })
+}
+
+const putUpdateCourse = async (req, res) => {
+    let courseId = req.params.courseId;
+    let course = req.body;
+    let data = await UpdateCourseService(courseId, course);
+    return res.status(200).json({
+        EC: 0,
+        data: data
+    })
+}
+
+const deleteCourse = async (req, res) => {
+    let courseId = req.params.courseId;
+    let data = await deleteCourseService(courseId);
+    return res.status(200).json({
+        EC: 0,
+        data: data
+    })
+
+}
+
+const getAllMembers = async (req, res) => {
+    let courseId = req.params.courseId;
+    let data = await getAllMembersService(courseId);
+    return res.status(200).json({
+        EC: 0,
+        data: data
+    })
+}
+
+const postAddTeacher = async (req, res) => {
+    let courseId = req.params.courseId;
+    let teacherId = req.body.teacherId;
+    let data = await addTeacherService(courseId, teacherId);
+    return res.status(200).json({
+        EC: 0,
+        data: data
+    });
+}
+
+const postAddStudent = async (req, res) => {
+    let courseId = req.params.courseId;
+    let studentId = req.body.studentId;
+    let data = await addStudentService(courseId, studentId);
+    return res.status(200).json({
+        EC: 0,
+        data: data
+    });
 }
 
 module.exports = {
-    postCreateCourse
+    postCreateCourse, getAllCourses, putUpdateCourse, deleteCourse, postAddTeacher, postAddStudent, getAllMembers
 }
