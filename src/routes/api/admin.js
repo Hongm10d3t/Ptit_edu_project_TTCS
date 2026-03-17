@@ -32,11 +32,8 @@ routerAPI.delete('/term/:termId/:courseId', courseController.deleteCourse);
 routerAPI.get('/course/:courseId/members', courseController.getAllMembers);
 routerAPI.post('/course/:courseId/teacher', courseController.postAddTeacher);
 routerAPI.post('/course/:courseId/student', courseController.postAddStudent);
-
-
-
-
-
+routerAPI.delete('/course/:courseId/student/:studentId', courseController.deleteStudent);
+routerAPI.delete('/course/:courseId/teacher/:teacherId', courseController.deleteTeacher);
 
 
 

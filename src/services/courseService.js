@@ -108,6 +108,35 @@ const addStudentService = async (courseId, studentId) => {
         console.log(">>>", error);
     }
 }
+
+const deleteStudentService = async (courseId, studentId) => {
+    try {
+        let course = Course.findByIdAndUpdate(courseId,
+            {
+                $pull: { studentIds: studentId }
+            },
+            { new: true }
+        )
+        return course;
+
+    } catch (error) {
+        console.log(">>>>", error)
+    }
+}
+
+const deleteTeacherService = async (courseId, teacherId) => {
+    try {
+        let course = await Course.findByIdAndUpdate(courseId,
+            {
+                $pull: { teacherIds: teacherId },
+            },
+            { new: true }
+        )
+        return course;
+    } catch (error) {
+        console.log(">>>>", error);
+    }
+}
 module.exports = {
-    createCourseService, getAllCoursesService, UpdateCourseService, deleteCourseService, addTeacherService, addStudentService, getAllMembersService
+    createCourseService, getAllCoursesService, UpdateCourseService, deleteCourseService, addTeacherService, addStudentService, getAllMembersService, deleteStudentService, deleteTeacherService
 }
