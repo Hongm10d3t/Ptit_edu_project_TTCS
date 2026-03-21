@@ -1,7 +1,7 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
-const User = require("../src/models/user"); // đổi đúng path model của bạn
+const User = require("../src/models/user");
 
 (async () => {
     await mongoose.connect('mongodb://127.0.0.1:27017/ptitedu');

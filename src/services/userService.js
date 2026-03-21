@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const Course = require('../models/course');
 const bcrypt = require("bcryptjs");
 const createUserService = async (UserData) => {
     try {
@@ -87,7 +88,18 @@ const deleteArrayUserService = async (arr) => {
     }
 }
 
+const getStudentMyCourseService = async (courseId) => {
+    try {
+        let course = Course.findById(courseId)
+            .populate("studentIds", "code fullName email role");
+        return course;
+
+    } catch (error) {
+        console.log(">>>>", error);
+    }
+}
+
 
 module.exports = {
-    createUserService, createArrayUserService, getAllUsersService, putUpdateUserService, deleteUserService, deleteArrayUserService, getDetailUserService
+    createUserService, createArrayUserService, getAllUsersService, putUpdateUserService, deleteUserService, deleteArrayUserService, getDetailUserService, getStudentMyCourseService
 }

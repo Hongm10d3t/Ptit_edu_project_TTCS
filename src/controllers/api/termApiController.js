@@ -1,5 +1,5 @@
 
-const { createTermService, getAllTermsService, updateTermService, deleteTermService } = require('../../services/termService');
+const { createTermService, getAllTermsService, updateTermService, deleteTermService, getMyTermsService } = require('../../services/termService');
 
 module.exports = {
     postCreateTerm: async (req, res) => {
@@ -28,6 +28,15 @@ module.exports = {
         let term = await deleteTermService(id);
         return res.status(200).json({
             data: term
+        })
+    },
+    getMyTerms: async (req, res) => {
+        const { id, role } = req.session.user;
+        console.log(">>>>>", id, role);
+        let terms = await getMyTermsService(id, role);
+        return res.status(200).json({
+            EC: 0,
+            data: terms
         })
     }
 }

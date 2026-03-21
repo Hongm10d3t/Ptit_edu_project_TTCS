@@ -1,4 +1,5 @@
 
+const course = require('../models/course');
 const Course = require('../models/course');
 const Term = require('../models/term');
 const User = require('../models/user');
@@ -67,17 +68,17 @@ const getAllMembersService = async (courseId) => {
 const addTeacherService = async (courseId, teacherId) => {
     const user = await User.findById(teacherId);
     if (!user) {
-        console.log("User không tồn tại");
+        throw new Error("User này không tồn tại");
     }
-    if (user.role !== "ADMIN") {
-        console.log("User này không phải teacher");
+    if (user.role !== "TEACHER") {
+        throw new Error("User này không phải là giảng viên");
     }
     try {
         const course = await Course.findByIdAndUpdate(courseId,
             {
                 $addToSet: { teacherIds: teacherId }
             },
-            { new: true }
+            { returnDocument: 'after' }
         )
         return course;
 
@@ -90,17 +91,17 @@ const addTeacherService = async (courseId, teacherId) => {
 const addStudentService = async (courseId, studentId) => {
     const user = await User.findById(studentId);
     if (!user) {
-        console.log("User không tồn tại");
+        throw new Error("User không tồn tại");
     }
     if (user.role !== "STUDENT") {
-        console.log("User này không phải là sinh viên");
+        throw new Error("User này không là sinh viên");
     }
     try {
         let course = await Course.findByIdAndUpdate(courseId,
             {
                 $addToSet: { studentIds: studentId }
             },
-            { new: true }
+            { returnDocument: 'after' }
         )
         return course;
 
@@ -115,7 +116,7 @@ const deleteStudentService = async (courseId, studentId) => {
             {
                 $pull: { studentIds: studentId }
             },
-            { new: true }
+            { returnDocument: 'after' }
         )
         return course;
 
@@ -130,13 +131,38 @@ const deleteTeacherService = async (courseId, teacherId) => {
             {
                 $pull: { teacherIds: teacherId },
             },
-            { new: true }
+            { returnDocument: 'after' }
         )
         return course;
     } catch (error) {
         console.log(">>>>", error);
     }
 }
+const getMyCourseService = async (userId, role, termId) => {
+    console.log(">>>>>", userId, role);
+    try {
+        let courses = [];
+        if (role === "STUDENT") {
+            courses = await Course.find({
+                studentIds: userId,
+                termId: termId
+            });
+        }
+        else if (role === "TEACHER") {
+            courses = await Course.find({
+                teacherIds: userId,
+                termId: termId
+            });
+        }
+        else {
+            throw new Error("Role không hợp lệ");
+        }
+        return courses;
+
+    } catch (error) {
+        console.log(">>>>", error);
+    }
+}
 module.exports = {
-    createCourseService, getAllCoursesService, UpdateCourseService, deleteCourseService, addTeacherService, addStudentService, getAllMembersService, deleteStudentService, deleteTeacherService
+    createCourseService, getAllCoursesService, UpdateCourseService, deleteCourseService, addTeacherService, addStudentService, getAllMembersService, deleteStudentService, deleteTeacherService, getMyCourseService
 }

@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 module.exports = {
     loginService: async (code, password) => {
         let user = await User.findOne({ code });
+        console.log(">>>>>>", user);
         if (!user) {
             return {
                 success: false,

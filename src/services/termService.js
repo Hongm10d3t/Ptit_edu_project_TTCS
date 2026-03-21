@@ -1,5 +1,6 @@
 
 const Term = require('../models/term');
+const Course = require('../models/course');
 
 module.exports = {
     createTermService: async (term) => {
@@ -41,5 +42,32 @@ module.exports = {
             console.log(error);
             return null;
         }
-    }
+    },
+    getMyTermsService: async (userId, role) => {
+        try {
+            let termIds = {};
+            if (role === "TEACHER") {
+                termIds = await Course.distinct("termId", {
+                    teacherIds: userId,
+                    status: "active",
+                });
+            }
+            else if (role === "STUDENT") {
+                termIds = await Course.distinct("termId", {
+                    studentIds: userId,
+                    status: "active"
+                });
+            }
+            else {
+                throw new Error("Role không hợp lệ");
+            }
+            const terms = await Term.find({
+                _id: { $in: termIds }
+            })
+            return terms;
+        } catch (error) {
+            console.log(">>>>", error);
+        }
+
+    },
 }

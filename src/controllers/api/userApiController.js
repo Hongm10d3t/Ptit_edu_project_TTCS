@@ -1,6 +1,6 @@
 
 const { uploadSingleFile } = require('../../services/fileService');
-const { createUserService, createArrayUserService, getAllUsersService, putUpdateUserService, deleteUserService, deleteArrayUserService, getDetailUserService } = require('../../services/userService');
+const { createUserService, createArrayUserService, getAllUsersService, putUpdateUserService, deleteUserService, deleteArrayUserService, getDetailUserService, getStudentMyCourseService } = require('../../services/userService');
 module.exports = {
     postCreateUser: async (req, res) => {
         let User = await createUserService(req.body);
@@ -53,6 +53,14 @@ module.exports = {
         return res.status(200).json({
             EC: 0,
             data: result
+        })
+    },
+    getStudentMyCourse: async (req, res) => {
+        let { courseId } = req.params;
+        let data = await getStudentMyCourseService(courseId);
+        return res.status(200).json({
+            EC: 0,
+            data: data
         })
     }
 

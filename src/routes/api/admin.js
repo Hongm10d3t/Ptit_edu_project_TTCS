@@ -3,7 +3,8 @@ const routerAPI = express.Router();
 
 const userController = require('../../controllers/api/userApiController');
 const termController = require('../../controllers/api/termApiController');
-const courseController = require('../../controllers/api/courseApiController')
+const courseController = require('../../controllers/api/courseApiController');
+
 const { requireRole } = require('../../middleware/authMiddlewareApi');
 
 // Add middleware

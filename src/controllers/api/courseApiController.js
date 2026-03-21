@@ -1,5 +1,5 @@
 
-const { createCourseService, getAllCoursesService, UpdateCourseService, deleteCourseService, addTeacherService, addStudentService, getAllMembersService, deleteStudentService, deleteTeacherService } = require('../../services/courseService');
+const { createCourseService, getAllCoursesService, UpdateCourseService, deleteCourseService, addTeacherService, addStudentService, getAllMembersService, deleteStudentService, deleteTeacherService, getMyCourseService } = require('../../services/courseService');
 const postCreateCourse = async (req, res) => {
     let termId = req.params.termId;
     const payload = { ...req.body, createdBy: req.session.user.id };
@@ -63,6 +63,7 @@ const postAddTeacher = async (req, res) => {
 const postAddStudent = async (req, res) => {
     let courseId = req.params.courseId;
     let studentId = req.body.studentId;
+    console.log(">>>>>", studentId);
     let data = await addStudentService(courseId, studentId);
     return res.status(200).json({
         EC: 0,
@@ -73,6 +74,7 @@ const postAddStudent = async (req, res) => {
 const deleteStudent = async (req, res) => {
     let courseId = req.params.courseId;
     let studentId = req.params.studentId;
+    console.log(">>>>>", courseId, studentId);
     let data = await deleteStudentService(courseId, studentId);
     return res.status(200).json({
         EC: 0,
@@ -90,6 +92,18 @@ const deleteTeacher = async (req, res) => {
     });
 }
 
+const getMyCourses = async (req, res) => {
+    const userId = req.session.user.id;
+    const role = req.session.user.role;
+    const { termId } = req.params;
+    let data = await getMyCourseService(userId, role, termId);
+    return res.status(200).json({
+        EC: 0,
+        data: data
+    });
+}
+
+
 module.exports = {
-    postCreateCourse, getAllCourses, putUpdateCourse, deleteCourse, postAddTeacher, postAddStudent, getAllMembers, deleteStudent, deleteTeacher
+    postCreateCourse, getAllCourses, putUpdateCourse, deleteCourse, postAddTeacher, postAddStudent, getAllMembers, deleteStudent, deleteTeacher, getMyCourses
 }
