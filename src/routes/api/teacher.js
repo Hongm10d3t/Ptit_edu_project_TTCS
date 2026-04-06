@@ -6,6 +6,7 @@ const courseApiController = require('../../controllers/api/courseApiController')
 const userApiController = require('../../controllers/api/userApiController');
 const materialApiController = require('../../controllers/api/materialApiController');
 const questionBankController = require('../../controllers/api/questionbankController');
+const examController = require('../../controllers/api/examApiController');
 const { requireRole } = require('../../middleware/authMiddlewareApi');
 // const uploadCsv = require('../../middleware/uploadCsv');
 // Add middleware
@@ -29,7 +30,17 @@ routerAPI.delete('/course/:courseId/questionbank/:questionBankId', questionBankC
 routerAPI.get('/course/:courseId/questionbank', questionBankController.getAllQuestionBank);
 // thêm câu hỏi vào ngân hàng câu hỏi bằng file CSV
 routerAPI.post('/question-bank/:questionBankId/import-csv', questionBankController.postCsvForQuestionBank);
-// lấy danh sách câu hỏi của 1 ngân hàng đề
+// lấy danh sách câu hỏi của 1 ngân hàng đề 
+routerAPI.get('/question-bank/:questionBankId/questionList', questionBankController.getListQuestions);
+// tạo 1 đề thi
+routerAPI.post("/exam/random", examController.postCreateRandomExam);
+// lấy ra đề thi của 1 theo lớp học
+routerAPI.get('/exams/:courseId', examController.getAllExamMyCourse);
+// lấy ra chi tiết 1 đề thi
+routerAPI.get('/exam/:examId', examController.getDetailExam);
+// xóa 1 đề thi
+routerAPI.delete('/exam/:examId', examController.deleteExam);
+
 
 
 module.exports = routerAPI;

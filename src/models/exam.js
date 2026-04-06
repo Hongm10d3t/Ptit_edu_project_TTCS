@@ -1,5 +1,55 @@
 const mongoose = require("mongoose");
 
+const examOptionSchema = new mongoose.Schema(
+    {
+        key: {
+            type: String,
+            enum: ["A", "B", "C", "D"],
+            required: true,
+        },
+        text: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+    },
+    { _id: false }
+);
+
+const examQuestionSchema = new mongoose.Schema(
+    {
+        bankQuestionId: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+        },
+        content: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        options: {
+            type: [examOptionSchema],
+            default: [],
+        },
+        correctAnswer: {
+            type: String,
+            enum: ["A", "B", "C", "D"],
+            required: true,
+        },
+        explanation: {
+            type: String,
+            default: "",
+            trim: true,
+        },
+        level: {
+            type: String,
+            enum: ["easy", "medium", "hard"],
+            default: "easy",
+        },
+    },
+    { _id: true }
+);
+
 const examSchema = new mongoose.Schema(
     {
         courseId: {
@@ -33,6 +83,10 @@ const examSchema = new mongoose.Schema(
             type: Number,
             required: true,
             min: 1,
+        },
+        questions: {
+            type: [examQuestionSchema],
+            default: [],
         },
         durationMinutes: {
             type: Number,

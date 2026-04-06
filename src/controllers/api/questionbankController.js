@@ -35,6 +35,15 @@ const getAllQuestionBank = async (req, res) => {
     })
 }
 
+const getListQuestions = async (req, res) => {
+    const { questionBankId } = req.params;
+    let data = await questionBankService.getListQuestionsService(questionBankId);
+    return res.status(200).json({
+        EC: 0,
+        data: data
+    })
+}
+
 // const postCsvForQuestionBank = async (req, res) => {
 //     return res.send("Test API thanh cong");
 // }
@@ -69,4 +78,4 @@ const postCsvForQuestionBank = async (req, res) => {
 };
 
 
-module.exports = { postCreateQuestionBank, postCsvForQuestionBank, getAllQuestionBank, deleteQuestionBank }
+module.exports = { postCreateQuestionBank, postCsvForQuestionBank, getAllQuestionBank, deleteQuestionBank, getListQuestions }

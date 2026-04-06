@@ -3,6 +3,8 @@ const QuestionBank = require('../models/questionBank');
 const csv = require('csv-parser');
 const { Readable } = require('stream');
 const mongoose = require("mongoose");
+
+// tạo 1 QuestionBank
 const createQuestionBankService = async (questionBank) => {
     try {
         // console.log(">>>>>>", questionBank);
@@ -16,6 +18,7 @@ const createQuestionBankService = async (questionBank) => {
 
 }
 
+// xóa 1 QuestionBank
 const deleteQuestionBankService = async (questionBankId) => {
     try {
         let data = await QuestionBank.findByIdAndDelete(questionBankId);
@@ -26,6 +29,7 @@ const deleteQuestionBankService = async (questionBankId) => {
     }
 }
 
+// Lấy ra tất cả QuestionBank
 const getAllQuestionBankService = async (courseId) => {
     try {
         let data = await QuestionBank.find({ courseId: courseId });
@@ -36,9 +40,11 @@ const getAllQuestionBankService = async (courseId) => {
     }
 }
 
-const getListQuestionsService = async = (questionBankId) => {
+// Lấy ra tất cả câu hỏi trong 1 QuestionBank
+const getListQuestionsService = async (questionBankId) => {
     try {
-        let data = aw
+        let data = await QuestionBank.findById(questionBankId).select("questions");
+        return data;
 
     } catch (error) {
         console.log(">>>>>", error);
@@ -232,4 +238,4 @@ async function importQuestionsFromCsv({
     };
 }
 
-module.exports = { createQuestionBankService, getAllQuestionBankService, importQuestionsFromCsv, deleteQuestionBankService }
+module.exports = { createQuestionBankService, getAllQuestionBankService, importQuestionsFromCsv, deleteQuestionBankService, getListQuestionsService }
