@@ -19,6 +19,12 @@ routerAPI.get('/:termId/courses', courseApiController.getMyCourses);
 routerAPI.get('/term/:courseId/students', userApiController.getStudentMyCourse);
 // đăng tải tài liệu
 routerAPI.post('/term/course/:courseId/material', materialApiController.postMaterialByTeacher);
+// Lấy tài liệu
+routerAPI.get('/term/course/:courseId/material', materialApiController.getAllMaterial);
+// xóa tài liệu
+// chưa làm vội
+
+
 
 // Manager Question Bank
 // Tạo 1 Question Bank

@@ -163,6 +163,15 @@ const getMyCourseService = async (userId, role, termId) => {
         console.log(">>>>", error);
     }
 }
+
+const getDetailCourseService = async (courseId) => {
+    try {
+        let data = Course.findById(courseId);
+        return data;
+    } catch (error) {
+        console.log(">>>>>", error);
+    }
+}
 module.exports = {
-    createCourseService, getAllCoursesService, UpdateCourseService, deleteCourseService, addTeacherService, addStudentService, getAllMembersService, deleteStudentService, deleteTeacherService, getMyCourseService
+    createCourseService, getAllCoursesService, UpdateCourseService, deleteCourseService, addTeacherService, addStudentService, getAllMembersService, deleteStudentService, deleteTeacherService, getMyCourseService, getDetailCourseService
 }

@@ -1,5 +1,6 @@
 
 const path = require("path");
+const Material = require('../models/material');
 
 const uploadSingleFile = async (fileObject) => {
     let uploadPath = path.resolve(__dirname, '../public/file/document')
@@ -64,6 +65,7 @@ const uploadMultipleFiles = async (filesArr) => {
         console.log(error)
     }
 }
+
 
 module.exports = {
     uploadSingleFile, uploadMultipleFiles

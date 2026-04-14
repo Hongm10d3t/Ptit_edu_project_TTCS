@@ -49,6 +49,10 @@ const deleteExam = async (req, res) => {
         data: data
     })
 }
+
+// const postStartExamAttempt = async (req, res) => {
+
+// }
 module.exports = {
     postCreateRandomExam, getAllExamMyCourse, getDetailExam, deleteExam
 };

@@ -128,6 +128,9 @@ const deleteExamService = async (examId) => {
         console.log(">>>>>", error);
     }
 }
+
+
+
 module.exports = {
     createRandomExam, getAllExamMyCourseService, getDetailExamService, deleteExamService
 };

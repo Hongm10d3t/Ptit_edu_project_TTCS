@@ -1,5 +1,5 @@
 
-const { createCourseService, getAllCoursesService, UpdateCourseService, deleteCourseService, addTeacherService, addStudentService, getAllMembersService, deleteStudentService, deleteTeacherService, getMyCourseService } = require('../../services/courseService');
+const { createCourseService, getAllCoursesService, UpdateCourseService, deleteCourseService, addTeacherService, addStudentService, getAllMembersService, deleteStudentService, deleteTeacherService, getMyCourseService, getDetailCourseService } = require('../../services/courseService');
 const postCreateCourse = async (req, res) => {
     let termId = req.params.termId;
     const payload = { ...req.body, createdBy: req.session.user.id };
@@ -102,8 +102,16 @@ const getMyCourses = async (req, res) => {
         data: data
     });
 }
+const getDetailCourse = async (req, res) => {
+    const { courseId } = req.params;
+    let data = await getDetailCourseService(courseId);
+    return res.status(200).json({
+        EC: 0,
+        data: data
+    })
+}
 
 
 module.exports = {
-    postCreateCourse, getAllCourses, putUpdateCourse, deleteCourse, postAddTeacher, postAddStudent, getAllMembers, deleteStudent, deleteTeacher, getMyCourses
+    postCreateCourse, getAllCourses, putUpdateCourse, deleteCourse, postAddTeacher, postAddStudent, getAllMembers, deleteStudent, deleteTeacher, getMyCourses, getDetailCourse
 }

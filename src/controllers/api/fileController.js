@@ -1,6 +1,6 @@
 
 
-const { uploadSingleFile } = require('../../services/fileService');
+const { uploadSingleFile, getAllMaterialService } = require('../../services/fileService');
 const uploadFile = async (req, res) => {
     const fileObject = req.files.file;
     const file = await uploadSingleFile(fileObject);
@@ -9,5 +9,6 @@ const uploadFile = async (req, res) => {
     })
 
 }
+
 
 module.exports = { uploadFile }

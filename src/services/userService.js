@@ -99,7 +99,16 @@ const getStudentMyCourseService = async (courseId) => {
     }
 }
 
+const getTeacherMyCourseService = async (courseId) => {
+    try {
+        let data = Course.findById(courseId).populate("teacherIds", "code fullName email role");
+        return data;
+
+    } catch (error) {
+        console.log(">>>>", error);
+    }
+}
 
 module.exports = {
-    createUserService, createArrayUserService, getAllUsersService, putUpdateUserService, deleteUserService, deleteArrayUserService, getDetailUserService, getStudentMyCourseService
+    createUserService, createArrayUserService, getAllUsersService, putUpdateUserService, deleteUserService, deleteArrayUserService, getDetailUserService, getStudentMyCourseService, getTeacherMyCourseService
 }
