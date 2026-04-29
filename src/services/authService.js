@@ -16,7 +16,13 @@ module.exports = {
         if (!isMatch) {
             return {
                 success: false,
-                message: "Tài khoản hoặc mật khẩu không đúng"
+                message: "Đăng nhập thất bại. Tài khoản hoặc mật khẩu không đúng"
+            }
+        }
+        if (user.status === 'INACTIVE') {
+            return {
+                success: false,
+                message: "Đăng nhập thất bại. Tài khoản này đã bị khóa"
             }
         }
         return {

@@ -7,6 +7,7 @@ const userApiController = require('../../controllers/api/userApiController');
 const materialApiController = require('../../controllers/api/materialApiController');
 const questionBankController = require('../../controllers/api/questionbankController');
 const examController = require('../../controllers/api/examApiController');
+const examAttemptController = require('../../controllers/api/examAttemptController');
 const { requireRole } = require('../../middleware/authMiddlewareApi');
 // const uploadCsv = require('../../middleware/uploadCsv');
 // Add middleware
@@ -22,7 +23,7 @@ routerAPI.post('/term/course/:courseId/material', materialApiController.postMate
 // Lấy tài liệu
 routerAPI.get('/term/course/:courseId/material', materialApiController.getAllMaterial);
 // xóa tài liệu
-// chưa làm vội
+routerAPI.delete('/term/course/:courseId/material/:materialId', materialApiController.deleteMaterialByTeacher);
 
 
 
@@ -47,6 +48,16 @@ routerAPI.get('/exam/:examId', examController.getDetailExam);
 // xóa 1 đề thi
 routerAPI.delete('/exam/:examId', examController.deleteExam);
 
+// xem kết quả làm bài của 1 sinh viên
+// xem kết quả của tất cả lần làm bài của sinh viên ở trong lớp học đó
+routerAPI.get(
+    "/course/:courseId/student/:studentId/exam-results",
+    examAttemptController.getStudentExamResultsByCourseForTeacher
+);
 
+routerAPI.get(
+    "/course/:courseId/student/:studentId/exam/:examId/attempts",
+    examAttemptController.getStudentExamAttemptsByExamForTeacher
+);
 
 module.exports = routerAPI;

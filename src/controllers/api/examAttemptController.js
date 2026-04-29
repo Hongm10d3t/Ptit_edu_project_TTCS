@@ -192,6 +192,61 @@ const deleteAttemptNote = async (req, res) => {
     }
 };
 
+
+const getStudentExamResultsByCourseForTeacher = async (req, res) => {
+    try {
+        const { courseId, studentId } = req.params;
+        const teacherId = req.session.user.id;
+
+        const data =
+            await examAttemptService.getStudentExamResultsByCourseForTeacherService({
+                courseId,
+                studentId,
+                teacherId,
+            });
+
+        return res.status(200).json({
+            EC: 0,
+            data,
+        });
+    } catch (error) {
+        console.log("getStudentExamResultsByCourseForTeacher error:", error);
+        return res.status(500).json({
+            EC: 1,
+            EM: error.message || "Lỗi server khi lấy kết quả học tập.",
+            data: [],
+        });
+    }
+};
+
+const getStudentExamAttemptsByExamForTeacher = async (req, res) => {
+    try {
+        const { courseId, studentId, examId } = req.params;
+        const teacherId = req.session.user.id;
+
+        const data =
+            await examAttemptService.getStudentExamAttemptsByExamForTeacherService({
+                courseId,
+                studentId,
+                examId,
+                teacherId,
+            });
+
+        return res.status(200).json({
+            EC: 0,
+            data,
+        });
+    } catch (error) {
+        console.log("getStudentExamAttemptsByExamForTeacher error:", error);
+        return res.status(500).json({
+            EC: 1,
+            EM: error.message || "Lỗi server khi lấy lịch sử làm bài.",
+            data: [],
+        });
+    }
+};
+
+
 module.exports = {
     postStartExamAttempt,
     getDetailExamAttempt,
@@ -201,5 +256,7 @@ module.exports = {
     postSaveAttemptNote,
     patchAttemptNote,
     deleteAttemptNote,
+    getStudentExamResultsByCourseForTeacher,
+    getStudentExamAttemptsByExamForTeacher,
 };
 // module.exports = { postStartExamAttempt, getDetailExamAttempt, patchAnswerForQuestion, postSubmitExamAttempt }

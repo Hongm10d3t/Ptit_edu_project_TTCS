@@ -47,6 +47,7 @@
 //     }
 // }
 const path = require("path");
+const fs = require("fs");
 const Material = require("../models/material");
 
 const uploadMaterialService = async (data) => {
@@ -91,9 +92,42 @@ const getAllMaterialService = async (courseId, fileType) => {
     }
 };
 
+const deleteMaterialService = async ({ courseId, materialId, userId }) => {
+    const material = await Material.findOne({
+        _id: materialId,
+        courseId: courseId,
+        createdBy: userId,
+    });
+
+    if (!material) {
+        throw new Error("Không tìm thấy tài liệu hoặc bạn không có quyền xóa.");
+    }
+
+    // Nếu là document thì xóa file vật lý nếu có
+    if (material.type === "document" && material.fileName) {
+        const filePath = path.resolve(
+            __dirname,
+            "../public/file/document",
+            material.fileName
+        );
+
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+    }
+
+    await Material.deleteOne({ _id: materialId });
+
+    return {
+        _id: materialId,
+        type: material.type,
+    };
+};
+
 module.exports = {
     uploadMaterialService,
     getAllMaterialService,
+    deleteMaterialService
 };
 
 

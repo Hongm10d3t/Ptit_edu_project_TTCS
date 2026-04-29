@@ -1,21 +1,55 @@
 
 const authService = require('../../services/authService');
 
-const loginApi = async (req, res) => {
-    const code = req.body.username;
-    const password = req.body.password;;
-    let user = await authService.loginService(code, password);
-    // session
-    req.session.user = {
-        id: user.data._id,
-        code: user.data.code,
-        role: user.data.role,
-        name: user.data.name
-    };
-    // console.log(">>>>>", req.session.user);
+// const loginApi = async (req, res) => {
+//     const code = req.body.username;
+//     const password = req.body.password;
+//     console.log(">>>>>", code, password);
+//     let user = await authService.loginService(code, password);
+//     // session
+//     req.session.user = {
+//         id: user.data._id,
+//         code: user.data.code,
+//         role: user.data.role,
+//         name: user.data.name
+//     };
+//     // console.log(">>>>>", req.session.user);
 
-    return res.status(200).json(user.data);
+//     return res.status(200).json(user.data);
+// };
+// const authService = require("../../services/authService");
+
+const loginApi = async (req, res) => {
+    try {
+        const code = req.body.username;
+        const password = req.body.password;
+
+        const result = await authService.loginService(code, password);
+
+        // login fail nhưng không phải lỗi server
+        if (!result.success) {
+            // Xử lí trả về trong trường hợp đăng nhập không thành công
+            return res.status(200).json(result);
+        }
+
+        req.session.user = {
+            id: result.data._id,
+            code: result.data.code,
+            role: result.data.role,
+            name: result.data.name || result.data.fullName || result.data.code,
+        };
+
+        return res.status(200).json(result);
+    } catch (error) {
+        console.log("loginApi error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Lỗi server khi đăng nhập",
+            data: null,
+        });
+    }
 };
+
 
 const logoutApi = (req, res) => {
     req.session.destroy((err) => {

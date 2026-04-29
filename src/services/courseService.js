@@ -65,51 +65,124 @@ const getAllMembersService = async (courseId) => {
     }
 }
 
-const addTeacherService = async (courseId, teacherId) => {
-    const user = await User.findById(teacherId);
-    if (!user) {
-        throw new Error("User này không tồn tại");
-    }
-    if (user.role !== "TEACHER") {
-        throw new Error("User này không phải là giảng viên");
-    }
-    try {
-        const course = await Course.findByIdAndUpdate(courseId,
-            {
-                $addToSet: { teacherIds: teacherId }
-            },
-            { returnDocument: 'after' }
-        )
-        return course;
+// const addTeacherService = async (courseId, teacherId) => {
+//     const user = await User.findById(teacherId);
+//     if (!user) {
+//         throw new Error("User này không tồn tại");
+//     }
+//     if (user.role !== "TEACHER") {
+//         throw new Error("User này không phải là giảng viên");
+//     }
+//     try {
+//         const course = await Course.findByIdAndUpdate(courseId,
+//             {
+//                 $addToSet: { teacherIds: teacherId }
+//             },
+//             { returnDocument: 'after' }
+//         )
+//         return course;
 
+//     } catch (error) {
+//         console.log(">>>", error);
+
+//     }
+// }
+
+// const addStudentService = async (courseId, studentId) => {
+//     const user = await User.findById(studentId);
+//     if (!user) {
+//         throw new Error("User không tồn tại");
+//     }
+//     if (user.role !== "STUDENT") {
+//         throw new Error("User này không là sinh viên");
+//     }
+//     try {
+//         let course = await Course.findByIdAndUpdate(courseId,
+//             {
+//                 $addToSet: { studentIds: studentId }
+//             },
+//             { returnDocument: 'after' }
+//         )
+//         return course;
+
+//     } catch (error) {
+//         console.log(">>>", error);
+//     }
+// }
+const addTeacherService = async (courseId, teacherIds) => {
+    const ids = Array.isArray(teacherIds) ? teacherIds : [teacherIds];
+
+    if (!ids.length) {
+        throw new Error("Chưa chọn giảng viên nào");
+    }
+
+    const users = await User.find({
+        _id: { $in: ids },
+    });
+
+    if (users.length !== ids.length) {
+        throw new Error("Có giảng viên không tồn tại");
+    }
+
+    const invalidUser = users.find((user) => user.role !== "TEACHER");
+    if (invalidUser) {
+        throw new Error("Có người dùng không phải là giảng viên");
+    }
+
+    try {
+        const course = await Course.findByIdAndUpdate(
+            courseId,
+            {
+                $addToSet: {
+                    teacherIds: { $each: ids },
+                },
+            },
+            { returnDocument: "after" }
+        );
+
+        return course;
     } catch (error) {
         console.log(">>>", error);
+        throw error;
+    }
+};
+const addStudentService = async (courseId, studentIds) => {
+    const ids = Array.isArray(studentIds) ? studentIds : [studentIds];
 
+    if (!ids.length) {
+        throw new Error("Chưa chọn sinh viên nào");
     }
-}
 
-const addStudentService = async (courseId, studentId) => {
-    const user = await User.findById(studentId);
-    if (!user) {
-        throw new Error("User không tồn tại");
+    const users = await User.find({
+        _id: { $in: ids },
+    });
+
+    if (users.length !== ids.length) {
+        throw new Error("Có sinh viên không tồn tại");
     }
-    if (user.role !== "STUDENT") {
-        throw new Error("User này không là sinh viên");
+
+    const invalidUser = users.find((user) => user.role !== "STUDENT");
+    if (invalidUser) {
+        throw new Error("Có người dùng không phải là sinh viên");
     }
+
     try {
-        let course = await Course.findByIdAndUpdate(courseId,
+        const course = await Course.findByIdAndUpdate(
+            courseId,
             {
-                $addToSet: { studentIds: studentId }
+                $addToSet: {
+                    studentIds: { $each: ids },
+                },
             },
-            { returnDocument: 'after' }
-        )
-        return course;
+            { returnDocument: "after" }
+        );
 
+        return course;
     } catch (error) {
         console.log(">>>", error);
+        throw error;
     }
-}
-
+};
 const deleteStudentService = async (courseId, studentId) => {
     try {
         let course = Course.findByIdAndUpdate(courseId,

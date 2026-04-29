@@ -46,6 +46,7 @@ const { uploadSingleFile } = require("../../services/fileService");
 const {
     uploadMaterialService,
     getAllMaterialService,
+    deleteMaterialService
 } = require("../../services/materialService");
 
 const postMaterialByTeacher = async (req, res) => {
@@ -101,4 +102,29 @@ const getAllMaterial = async (req, res) => {
     }
 };
 
-module.exports = { postMaterialByTeacher, getAllMaterial };
+const deleteMaterialByTeacher = async (req, res) => {
+    try {
+        const { courseId, materialId } = req.params;
+        const userId = req.session.user.id;
+
+        const result = await deleteMaterialService({
+            courseId,
+            materialId,
+            userId,
+        });
+
+        return res.status(200).json({
+            EC: 0,
+            EM: "Xóa tài liệu thành công.",
+            data: result,
+        });
+    } catch (error) {
+        console.log("deleteMaterialByTeacher error:", error);
+        return res.status(500).json({
+            EC: 1,
+            EM: error.message || "Lỗi server khi xóa tài liệu.",
+            data: null,
+        });
+    }
+};
+module.exports = { postMaterialByTeacher, getAllMaterial, deleteMaterialByTeacher };

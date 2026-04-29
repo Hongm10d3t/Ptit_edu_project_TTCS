@@ -50,26 +50,66 @@ const getAllMembers = async (req, res) => {
     })
 }
 
+// const postAddTeacher = async (req, res) => {
+//     let courseId = req.params.courseId;
+//     let teacherId = req.body.teacherId;
+//     let data = await addTeacherService(courseId, teacherId);
+//     return res.status(200).json({
+//         EC: 0,
+//         data: data
+//     });
+// }
 const postAddTeacher = async (req, res) => {
-    let courseId = req.params.courseId;
-    let teacherId = req.body.teacherId;
-    let data = await addTeacherService(courseId, teacherId);
-    return res.status(200).json({
-        EC: 0,
-        data: data
-    });
-}
+    try {
+        const courseId = req.params.courseId;
+        const teacherIds = req.body.teacherIds || req.body.teacherId;
 
+        const data = await addTeacherService(courseId, teacherIds);
+
+        return res.status(200).json({
+            EC: 0,
+            data: data,
+        });
+    } catch (error) {
+        console.log("postAddTeacher error:", error);
+        return res.status(500).json({
+            EC: 1,
+            EM: error.message || "Lỗi khi thêm giảng viên",
+            data: null,
+        });
+    }
+};
+
+// const postAddStudent = async (req, res) => {
+//     let courseId = req.params.courseId;
+//     let studentId = req.body.studentId;
+//     console.log(">>>>>", studentId);
+//     let data = await addStudentService(courseId, studentId);
+//     return res.status(200).json({
+//         EC: 0,
+//         data: data
+//     });
+// }
 const postAddStudent = async (req, res) => {
-    let courseId = req.params.courseId;
-    let studentId = req.body.studentId;
-    console.log(">>>>>", studentId);
-    let data = await addStudentService(courseId, studentId);
-    return res.status(200).json({
-        EC: 0,
-        data: data
-    });
-}
+    try {
+        const courseId = req.params.courseId;
+        const studentIds = req.body.studentIds || req.body.studentId;
+
+        const data = await addStudentService(courseId, studentIds);
+
+        return res.status(200).json({
+            EC: 0,
+            data: data,
+        });
+    } catch (error) {
+        console.log("postAddStudent error:", error);
+        return res.status(500).json({
+            EC: 1,
+            EM: error.message || "Lỗi khi thêm sinh viên",
+            data: null,
+        });
+    }
+};
 
 const deleteStudent = async (req, res) => {
     let courseId = req.params.courseId;

@@ -1,6 +1,7 @@
 
 const { uploadSingleFile } = require('../../services/fileService');
-const { createUserService, createArrayUserService, getAllUsersService, putUpdateUserService, deleteUserService, deleteArrayUserService, getDetailUserService, getStudentMyCourseService, getTeacherMyCourseService } = require('../../services/userService');
+const { createUserService, createArrayUserService, putUpdateUserService, getAllUsersService, deleteUserService, deleteArrayUserService, getDetailUserService, getStudentMyCourseService, getTeacherMyCourseService } = require('../../services/userService');
+
 module.exports = {
     postCreateUser: async (req, res) => {
         let User = await createUserService(req.body);
@@ -17,15 +18,24 @@ module.exports = {
         })
     },
     getAllUsers: async (req, res) => {
-        let limit = req.query.limit;
-        let page = req.query.page;
-        let Users = null;
-        if (limit && page) {
-            Users = await getAllUsersService(limit, page);
-        } else {
-            Users = await getAllUsersService();
+        try {
+            let limit = Number(req.query.limit) || 10;
+            let page = Number(req.query.page) || 1;
+
+            const data = await getAllUsersService(limit, page);
+
+            return res.status(200).json({
+                EC: 0,
+                data,
+            });
+        } catch (error) {
+            console.log("getAllUsers error:", error);
+            return res.status(500).json({
+                EC: 1,
+                EM: "Lỗi server khi lấy danh sách người dùng",
+                data: null,
+            });
         }
-        return res.json(Users);
     },
     getDetailUser: async (req, res) => {
         let user = await getDetailUserService(req.params.id);

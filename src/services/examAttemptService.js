@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const Course = require("../models/course");
 const Exam = require("../models/exam");
 const ExamAttempt = require("../models/examAttempt");
-const examAttempt = require("../models/examAttempt");
 
 // gán câu hỏi từ exam sang examAttempt
 function buildAttemptQuestionsFromExam(examQuestions) {
@@ -308,6 +307,115 @@ const deleteAttemptNoteService = async ({
     return true;
 };
 
+// const Course = require("../models/course");
+// const ExamAttempt = require("../models/examAttempt");
+
+const countCorrectAnswers = (questions = []) => {
+    return questions.filter((q) => {
+        if (typeof q?.isCorrect === "boolean") return q.isCorrect;
+        return q?.selectedAnswer === q?.correctAnswer;
+    }).length;
+};
+
+const ensureTeacherOwnsCourse = async (courseId, teacherId) => {
+    const course = await Course.findOne({
+        _id: courseId,
+        teacherIds: teacherId,
+    });
+
+    if (!course) {
+        throw new Error("Bạn không có quyền xem kết quả học tập của học phần này.");
+    }
+
+    return course;
+};
+
+const getStudentExamResultsByCourseForTeacherService = async ({
+    courseId,
+    studentId,
+    teacherId,
+}) => {
+    await ensureTeacherOwnsCourse(courseId, teacherId);
+
+    const attempts = await ExamAttempt.find({
+        courseId,
+        studentId,
+    })
+        .populate("examId", "title")
+        .sort({ createdAt: -1 })
+        .lean();
+
+    const summaryMap = new Map();
+
+    for (const attempt of attempts) {
+        if (!attempt.examId?._id) continue;
+
+        const examId = String(attempt.examId._id);
+        const correctCount = countCorrectAnswers(attempt.questions || []);
+        const totalQuestions = Array.isArray(attempt.questions)
+            ? attempt.questions.length
+            : 0;
+
+        if (!summaryMap.has(examId)) {
+            summaryMap.set(examId, {
+                examId: attempt.examId._id,
+                title: attempt.examId.title || "Đề thi",
+                attemptCount: 0,
+                bestScore: attempt.score || 0,
+                latestScore: attempt.score || 0,
+                latestStatus: attempt.status || "--",
+                latestSubmittedAt: attempt.submittedAt || null,
+                totalQuestions,
+                bestCorrectCount: correctCount,
+            });
+        }
+
+        const current = summaryMap.get(examId);
+        current.attemptCount += 1;
+
+        if ((attempt.score || 0) > current.bestScore) {
+            current.bestScore = attempt.score || 0;
+            current.bestCorrectCount = correctCount;
+        }
+    }
+
+    return Array.from(summaryMap.values());
+};
+
+const getStudentExamAttemptsByExamForTeacherService = async ({
+    courseId,
+    studentId,
+    examId,
+    teacherId,
+}) => {
+    await ensureTeacherOwnsCourse(courseId, teacherId);
+
+    const attempts = await ExamAttempt.find({
+        courseId,
+        studentId,
+        examId,
+    })
+        .sort({ createdAt: -1 })
+        .lean();
+
+    return attempts.map((attempt, index) => {
+        const correctCount = countCorrectAnswers(attempt.questions || []);
+        const totalQuestions = Array.isArray(attempt.questions)
+            ? attempt.questions.length
+            : 0;
+
+        return {
+            _id: attempt._id,
+            attemptNo: attempts.length - index,
+            startedAt: attempt.startedAt,
+            submittedAt: attempt.submittedAt,
+            status: attempt.status || "--",
+            score: attempt.score || 0,
+            correctCount,
+            totalQuestions,
+        };
+    });
+};
 
 
 
@@ -317,4 +425,6 @@ module.exports = {
     postSaveAttemptNoteService,
     patchAttemptNoteService,
     deleteAttemptNoteService,
+    getStudentExamResultsByCourseForTeacherService,
+    getStudentExamAttemptsByExamForTeacherService,
 }

@@ -34,20 +34,30 @@ const createArrayUserService = async (arr) => {
 
 const getAllUsersService = async (limit, page) => {
     try {
-        let result = null;
-        if (limit && page) {
-            let skip = (page - 1) * limit;
-            result = await User.find({}).skip(skip).limit(limit).exec(); // thêm hàm exec() chạy các hàm liên tiếp (tránh bất đồng bộ)
-        } else {
-            result = await User.find({});
-        }
-        return result;
+        let skip = (page - 1) * limit;
 
+        const [items, total] = await Promise.all([
+            User.find({})
+                .skip(skip)
+                .limit(limit)
+                .exec(),
+            User.countDocuments({}),
+        ]);
+
+        return {
+            items,
+            pagination: {
+                page,
+                limit,
+                total,
+                totalPages: Math.ceil(total / limit),
+            },
+        };
     } catch (error) {
-        console.log(">>>>error", error);
-        return null
+        console.log(">>> error", error);
+        throw error;
     }
-}
+};
 
 const getDetailUserService = async (id) => {
     return await User.findById(id);
@@ -91,7 +101,7 @@ const deleteArrayUserService = async (arr) => {
 const getStudentMyCourseService = async (courseId) => {
     try {
         let course = Course.findById(courseId)
-            .populate("studentIds", "code fullName email role");
+            .populate("studentIds", "code fullName email role department status");
         return course;
 
     } catch (error) {
@@ -101,7 +111,7 @@ const getStudentMyCourseService = async (courseId) => {
 
 const getTeacherMyCourseService = async (courseId) => {
     try {
-        let data = Course.findById(courseId).populate("teacherIds", "code fullName email role");
+        let data = Course.findById(courseId).populate("teacherIds", "code fullName email role ");
         return data;
 
     } catch (error) {
