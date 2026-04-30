@@ -12,7 +12,7 @@ const { requireRole } = require('../../middleware/authMiddlewareApi');
 
 routerAPI.use(requireRole("STUDENT"));
 // lấy ra tất cả kì học được join
-routerAPI.get('/terms', termApiController.getAllTerms);
+routerAPI.get('/terms', termApiController.getMyTerms);
 // lấy tất cả lớp học học trong kì học
 routerAPI.get('/:termId/courses', courseApiController.getMyCourses);
 // lấy thông tin chi tiết của 1 lớp học
