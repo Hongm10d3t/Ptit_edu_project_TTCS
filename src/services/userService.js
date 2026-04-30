@@ -72,6 +72,7 @@ const putUpdateUserService = async (id, data) => {
     //     console.log(">>>>error", error);
     //     return null
     // }
+    data.passwordHash = await bcrypt.hash(data.passwordHash, 10);
     return await User.findByIdAndUpdate(id, data, { returnDocument: "after" });
 }
 
