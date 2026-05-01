@@ -19,8 +19,8 @@ module.exports = {
     },
     getAllUsers: async (req, res) => {
         try {
-            let limit = Number(req.query.limit) || 10;
-            let page = Number(req.query.page) || 1;
+            let limit = req.query.limit ? Number(req.query.limit) : null;
+            let page = req.query.page ? Number(req.query.page) : null;
 
             const data = await getAllUsersService(limit, page);
 

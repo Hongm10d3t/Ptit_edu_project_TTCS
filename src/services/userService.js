@@ -31,30 +31,20 @@ const createArrayUserService = async (arr) => {
         return null;
     }
 }
-
 const getAllUsersService = async (limit, page) => {
     try {
-        let skip = (page - 1) * limit;
+        let result = null;
 
-        const [items, total] = await Promise.all([
-            User.find({})
-                .skip(skip)
-                .limit(limit)
-                .exec(),
-            User.countDocuments({}),
-        ]);
+        if (limit && page) {
+            let skip = (page - 1) * limit;
+            result = await User.find({}).skip(skip).limit(limit).exec();
+        } else {
+            result = await User.find({});
+        }
 
-        return {
-            items,
-            pagination: {
-                page,
-                limit,
-                total,
-                totalPages: Math.ceil(total / limit),
-            },
-        };
+        return result;
     } catch (error) {
-        console.log(">>> error", error);
+        console.log(">>>> error", error);
         throw error;
     }
 };
