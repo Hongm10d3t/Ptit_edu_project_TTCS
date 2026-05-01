@@ -63,28 +63,27 @@ const getDetailUserService = async (id) => {
     return await User.findById(id);
 }
 
-const putUpdateUserService = async (id, data) => {
-    // try {
-    //     let User_new = await User.updateOne({ _id: id }, { name, email, address });
-    //     return User_new;
+// const putUpdateUserService = async (id, data) => {
+//     data.passwordHash = await bcrypt.hash(data.passwordHash, 10);
+//     return await User.findByIdAndUpdate(id, data, { returnDocument: "after" });
+// }
 
-    // } catch (error) {
-    //     console.log(">>>>error", error);
-    //     return null
-    // }
-    data.passwordHash = await bcrypt.hash(data.passwordHash, 10);
-    return await User.findByIdAndUpdate(id, data, { returnDocument: "after" });
-}
+const putUpdateUserService = async (id, data) => {
+    const updateData = { ...data };
+    console.log(">>>>>>", updateData);
+
+    if (updateData.passwordHash && updateData.passwordHash.trim()) {
+        updateData.passwordHash = await bcrypt.hash(updateData.passwordHash.trim(), 10);
+    } else {
+        delete updateData.passwordHash;
+    }
+
+    return await User.findByIdAndUpdate(id, updateData, {
+        returnDocument: "after",
+    });
+};
 
 const deleteUserService = async (id) => {
-    // try {
-    //     let result = await User.deleteById(id);
-    //     return result;
-
-    // } catch (error) {
-    //     console.log(">>>>error", error);
-    //     return null
-    // }
     return await User.findByIdAndDelete(id);
 }
 

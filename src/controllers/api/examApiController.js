@@ -9,6 +9,7 @@ const postCreateRandomExam = async (req, res) => {
             ...req.body,
             createdBy: userId,
         });
+        console.log(">>>>>>", req.body);
 
         return res.status(result.status).json({
             EC: result.EC,

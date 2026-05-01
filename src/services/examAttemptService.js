@@ -212,7 +212,9 @@ const getDetailExamAttemptForReviewService = async ({ examAttemptId, studentId }
     const attempt = await ExamAttempt.findOne({
         _id: examAttemptId,
         studentId,
-    }).populate("questions.questionId");
+    })
+        .populate("questions.questionId")
+        .populate("examId", "title durationMinutes");
 
     if (!attempt) {
         throw new Error("Không tìm thấy bài làm");

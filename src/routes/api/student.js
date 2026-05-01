@@ -9,6 +9,7 @@ const materialApiController = require('../../controllers/api/materialApiControll
 const examController = require('../../controllers/api/examApiController');
 const examAttemptController = require('../../controllers/api/examAttemptController');
 const { requireRole } = require('../../middleware/authMiddlewareApi');
+const announcementController = require("../../controllers/api/announcementApiController");
 
 routerAPI.use(requireRole("STUDENT"));
 // lấy ra tất cả kì học được join
@@ -21,6 +22,9 @@ routerAPI.get('/term/:courseId', courseApiController.getDetailCourse);
 routerAPI.get('/term/:courseId/students', userApiController.getStudentMyCourse);
 // xem thông tin giảng viên của lớp học
 routerAPI.get('/term/:courseId/teacher', userApiController.getTeacherMyCourse);
+
+// lấy thông báo admin gửi cho sinh viên
+routerAPI.get("/announcements", announcementController.getMyAnnouncements);
 
 // các chức năng khi bấm vào 1 lớp học
 

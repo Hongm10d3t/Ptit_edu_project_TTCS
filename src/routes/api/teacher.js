@@ -8,6 +8,7 @@ const materialApiController = require('../../controllers/api/materialApiControll
 const questionBankController = require('../../controllers/api/questionbankController');
 const examController = require('../../controllers/api/examApiController');
 const examAttemptController = require('../../controllers/api/examAttemptController');
+const announcementController = require("../../controllers/api/announcementApiController");
 const { requireRole } = require('../../middleware/authMiddlewareApi');
 // const uploadCsv = require('../../middleware/uploadCsv');
 // Add middleware
@@ -26,7 +27,8 @@ routerAPI.get('/term/course/:courseId/material', materialApiController.getAllMat
 routerAPI.delete('/term/course/:courseId/material/:materialId', materialApiController.deleteMaterialByTeacher);
 
 
-
+// lấy thông báo admin gửi cho giảng viên
+routerAPI.get("/announcements", announcementController.getMyAnnouncements);
 // Manager Question Bank
 // Tạo 1 Question Bank
 routerAPI.post('/course/:courseId/questionbank', questionBankController.postCreateQuestionBank);

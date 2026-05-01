@@ -7,6 +7,7 @@ const announcementSchema = new mongoose.Schema(
             required: true,
             trim: true,
         },
+
         content: {
             type: String,
             required: true,
@@ -21,8 +22,13 @@ const announcementSchema = new mongoose.Schema(
 
         target: {
             type: String,
-            enum: ["global"],
-            default: "global",
+            enum: ["student", "teacher", "all"],
+            default: "student",
+        },
+
+        isPublished: {
+            type: Boolean,
+            default: true,
         },
     },
     {
@@ -32,6 +38,7 @@ const announcementSchema = new mongoose.Schema(
 
 announcementSchema.index({ createdAt: -1 });
 announcementSchema.index({ createdBy: 1 });
+announcementSchema.index({ target: 1 });
 
 module.exports =
     mongoose.models.Announcement ||
